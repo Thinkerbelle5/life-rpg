@@ -1,28 +1,177 @@
-let player = {
-    diamonds: 0,
+/* ================================= */
+/* LIFE RPG - MAIN GAME CODE */
+/* ================================= */
 
-    intelligence: {
-        level: 1,
-        xp: 0
+
+/* ================================= */
+/* DATA */
+/* ================================= */
+
+const defaultGame = {
+    diamonds: 10,
+
+    stats: {
+        organisation: {
+            level: 1,
+            xp: 0
+        },
+
+        wellbeing: {
+            level: 1,
+            xp: 0
+        },
+
+        intelligence: {
+            level: 1,
+            xp: 0
+        },
+
+        development: {
+            level: 1,
+            xp: 0
+        }
     },
 
-    compassion: {
-        level: 1,
-        xp: 0
-    },
+    mainQuests: [],
+    sideQuests: [],
 
-    courage: {
-        level: 1,
-        xp: 0
-    },
-
-    quests: []
+    inventory: []
 };
 
 
-// -------------------------
-// LEVEL SYSTEM
-// -------------------------
+let game = loadGame();
+
+let currentQuestType = "main";
+
+let stepCount = 0;
+
+
+/* ================================= */
+/* SHOP ITEMS */
+/* ================================= */
+
+const shopItems = [
+
+    {
+        id: "cat",
+        name: "Cosy Cat",
+        icon: "🐈",
+        price: 250,
+        description: "A tiny companion for your adventures."
+    },
+
+    {
+        id: "rabbit",
+        name: "Little Rabbit",
+        icon: "🐇",
+        price: 350,
+        description: "A fluffy little adventure buddy."
+    },
+
+    {
+        id: "puppy",
+        name: "Adventure Puppy",
+        icon: "🐕",
+        price: 500,
+        description: "Ready for every quest."
+    },
+
+    {
+        id: "flowers",
+        name: "Flower Bouquet",
+        icon: "💐",
+        price: 75,
+        description: "A little reward for yourself."
+    },
+
+    {
+        id: "plant",
+        name: "Little Plant",
+        icon: "🪴",
+        price: 100,
+        description: "Add some greenery to your room."
+    },
+
+    {
+        id: "bookshelf",
+        name: "Bookshelf",
+        icon: "📚",
+        price: 300,
+        description: "For your growing collection."
+    },
+
+    {
+        id: "hoodie",
+        name: "Cosy Hoodie",
+        icon: "🧥",
+        price: 200,
+        description: "Comfort +10."
+    },
+
+    {
+        id: "sneakers",
+        name: "Adventure Sneakers",
+        icon: "👟",
+        price: 175,
+        description: "For your next adventure."
+    },
+
+    {
+        id: "journal",
+        name: "Beautiful Journal",
+        icon: "📔",
+        price: 150,
+        description: "For thoughts, plans and memories."
+    }
+
+];
+
+
+/* ================================= */
+/* LOAD / SAVE */
+/* ================================= */
+
+function loadGame() {
+
+    const saved = localStorage.getItem("lifeRPG");
+
+    if (!saved) {
+        return structuredClone(defaultGame);
+    }
+
+    try {
+
+        const old = JSON.parse(saved);
+
+        return {
+            ...structuredClone(defaultGame),
+            ...old,
+            stats: {
+                ...structuredClone(defaultGame.stats),
+                ...(old.stats || {})
+            },
+            mainQuests: old.mainQuests || [],
+            sideQuests: old.sideQuests || [],
+            inventory: old.inventory || []
+        };
+
+    } catch (error) {
+
+        console.error("Could not load saved game:", error);
+
+        return structuredClone(defaultGame);
+    }
+}
+
+
+function saveGame() {
+    localStorage.setItem("lifeRPG", JSON.stringify(game));
+}
+
+
+/* ================================= */
+/* XP SYSTEM */
+/* ================================= */
 
 function xpRequired(level) {
 
@@ -33,204 +182,208 @@ function xpRequired(level) {
 }
 
 
-// -------------------------
-// SAVE GAME
-// -------------------------
+function addXP(category, amount) {
 
-function saveGame() {
-
-    localStorage.setItem(
-        "lifeRPG",
-        JSON.stringify(player)
-    );
-
-}
-
-
-// -------------------------
-// LOAD GAME
-// -------------------------
-
-function loadGame() {
-
-    const savedGame = localStorage.getItem("lifeRPG");
-
-    if (savedGame) {
-
-        player = JSON.parse(savedGame);
-
+    if (!amount || amount <= 0) {
+        return;
     }
 
-}
+    const stat = game.stats[category];
 
+    if (!stat) {
+        return;
+    }
 
-// -------------------------
-// ADD XP
-// -------------------------
+    stat.xp += Number(amount);
 
-function addXP(stat, amount) {
+    while (stat.xp >= xpRequired(stat.level)) {
 
-    player[stat].xp += amount;
+        stat.xp -= xpRequired(stat.level);
 
-    while (
-        player[stat].xp >= xpRequired(player[stat].level)
-    ) {
+        stat.level++;
 
-        player[stat].xp -= xpRequired(player[stat].level);
+        const diamondReward = 10 + stat.level * 5;
 
-        player[stat].level++;
-
-        const diamondReward =
-            10 + (player[stat].level * 5);
-
-        player.diamonds += diamondReward;
+        game.diamonds += diamondReward;
 
         alert(
-            `✨ LEVEL UP! ✨\n\n` +
-            `${stat.toUpperCase()} is now Level ${player[stat].level}!\n\n` +
-            `You earned ${diamondReward} 💎`
+            `✨ LEVEL UP!\n\n${formatCategory(category)} reached Level ${stat.level}!\n\n💎 +${diamondReward} diamonds`
         );
-
     }
 
 }
 
 
-// -------------------------
-// UPDATE SCREEN
-// -------------------------
+/* ================================= */
+/* CATEGORY NAMES */
+/* ================================= */
 
-function updateDisplay() {
+function formatCategory(category) {
 
-    document.getElementById("diamondCount").textContent =
-        player.diamonds;
+    const names = {
+        organisation: "Organisation",
+        wellbeing: "Wellbeing",
+        intelligence: "Intelligence",
+        development: "Personal Development"
+    };
 
-
-    updateStat(
-        "intelligence",
-        "intelligenceLevel",
-        "intelligenceXP",
-        "intelligenceRequired",
-        "intelligenceBar"
-    );
-
-    updateStat(
-        "compassion",
-        "compassionLevel",
-        "compassionXP",
-        "compassionRequired",
-        "compassionBar"
-    );
-
-    updateStat(
-        "courage",
-        "courageLevel",
-        "courageXP",
-        "courageRequired",
-        "courageBar"
-    );
-
-
-    renderQuests();
-
+    return names[category] || category;
 }
 
 
-function updateStat(
-    stat,
-    levelID,
-    xpID,
-    requiredID,
-    barID
-) {
+/* ================================= */
+/* TABS */
+/* ================================= */
 
-    const level = player[stat].level;
+function showTab(tabId, button) {
 
-    const xp = player[stat].xp;
+    document.querySelectorAll(".tab-section").forEach(section => {
+        section.classList.remove("active-tab");
+    });
 
-    const required = xpRequired(level);
+    document.querySelectorAll(".nav-button").forEach(btn => {
+        btn.classList.remove("active");
+    });
 
+    const selectedTab = document.getElementById(tabId);
 
-    document.getElementById(levelID).textContent =
-        level;
+    if (selectedTab) {
+        selectedTab.classList.add("active-tab");
+    }
 
-    document.getElementById(xpID).textContent =
-        xp;
+    if (button) {
+        button.classList.add("active");
+    }
 
-    document.getElementById(requiredID).textContent =
-        required;
-
-
-    const percentage =
-        Math.min((xp / required) * 100, 100);
-
-    document.getElementById(barID).style.width =
-        percentage + "%";
-
+    renderAll();
 }
 
 
-// -------------------------
-// QUEST CREATOR
-// -------------------------
+/* ================================= */
+/* QUEST CREATOR */
+/* ================================= */
 
-function openQuestCreator() {
+function openQuestCreator(type = "main") {
 
-    document
-        .getElementById("questModal")
-        .classList.remove("hidden");
+    currentQuestType = type;
+
+    const modal = document.getElementById("questModal");
+
+    const title = document.getElementById("modalTitle");
+
+    if (type === "side") {
+        title.textContent = "Create Side Quest";
+    } else {
+        title.textContent = "Create Quest";
+    }
+
+    document.getElementById("questForm").reset();
+
+    document.getElementById("diamondReward").value = 10;
+
+    document.getElementById("stepInputs").innerHTML = "";
+
+    stepCount = 0;
+
+    addStep();
+
+    modal.classList.add("open");
+
+    document.body.style.overflow = "hidden";
 
 }
 
 
 function closeQuestCreator() {
 
-    document
-        .getElementById("questModal")
-        .classList.add("hidden");
+    document.getElementById("questModal").classList.remove("open");
+
+    document.body.style.overflow = "";
 
 }
 
 
-// -------------------------
-// ADD QUEST STEP
-// -------------------------
+/* ================================= */
+/* ADD QUEST STEP */
+/* ================================= */
 
 function addStep() {
 
-    const container =
-        document.getElementById("stepInputs");
+    stepCount++;
 
-    const number =
-        container.children.length + 1;
+    const container = document.getElementById("stepInputs");
 
+    const row = document.createElement("div");
 
-    const step =
-        document.createElement("div");
+    row.className = "step-row";
 
-    step.className = "step-input";
+    row.innerHTML = `
 
-
-    step.innerHTML = `
-        <span>${number}.</span>
+        <span class="step-number">
+            ${stepCount}.
+        </span>
 
         <input
             type="text"
+            class="step-input"
             placeholder="What do you need to do?"
+            required
         >
+
+        <button
+            type="button"
+            class="remove-step"
+            onclick="removeStep(this)"
+            title="Remove step"
+        >
+            ×
+        </button>
+
     `;
 
-
-    container.appendChild(step);
+    container.appendChild(row);
 
 }
 
 
-// -------------------------
-// CREATE QUEST
-// -------------------------
+/* ================================= */
+/* REMOVE STEP */
+/* ================================= */
 
-function createQuest() {
+function removeStep(button) {
+
+    const row = button.parentElement;
+
+    row.remove();
+
+    renumberSteps();
+
+}
+
+
+function renumberSteps() {
+
+    const rows = document.querySelectorAll(".step-row");
+
+    rows.forEach((row, index) => {
+
+        row.querySelector(".step-number").textContent =
+            `${index + 1}.`;
+
+    });
+
+    stepCount = rows.length;
+
+}
+
+
+/* ================================= */
+/* CREATE QUEST */
+/* ================================= */
+
+function createQuest(event) {
+
+    event.preventDefault();
 
     const name =
         document.getElementById("questName").value.trim();
@@ -238,32 +391,42 @@ function createQuest() {
     const description =
         document.getElementById("questDescription").value.trim();
 
+    const organisation =
+        Number(document.getElementById("organisationReward").value) || 0;
+
+    const wellbeing =
+        Number(document.getElementById("wellbeingReward").value) || 0;
+
+    const intelligence =
+        Number(document.getElementById("intelligenceReward").value) || 0;
+
+    const development =
+        Number(document.getElementById("developmentReward").value) || 0;
+
+    const diamonds =
+        Number(document.getElementById("diamondReward").value) || 0;
+
+
+    const steps = Array.from(
+        document.querySelectorAll(".step-input")
+    )
+    .map(input => input.value.trim())
+    .filter(value => value !== "");
+
 
     if (!name) {
 
-        alert("Give your quest a name first!");
+        alert("Please give your quest a name!");
 
         return;
-
     }
-
-
-    const steps =
-        Array.from(
-            document.querySelectorAll(
-                "#stepInputs input"
-            )
-        )
-        .map(input => input.value.trim())
-        .filter(step => step !== "");
 
 
     if (steps.length === 0) {
 
-        alert("Add at least one quest step!");
+        alert("Please add at least one quest step!");
 
         return;
-
     }
 
 
@@ -277,42 +440,21 @@ function createQuest() {
 
         rewards: {
 
-            intelligence:
-                Number(
-                    document.getElementById(
-                        "intelligenceReward"
-                    ).value
-                ),
+            organisation: organisation,
 
-            compassion:
-                Number(
-                    document.getElementById(
-                        "compassionReward"
-                    ).value
-                ),
+            wellbeing: wellbeing,
 
-            courage:
-                Number(
-                    document.getElementById(
-                        "courageReward"
-                    ).value
-                ),
+            intelligence: intelligence,
 
-            diamonds:
-                Number(
-                    document.getElementById(
-                        "diamondReward"
-                    ).value
-                )
+            development: development,
+
+            diamonds: diamonds
 
         },
 
-        steps: steps.map(step => ({
-
-            text: step,
-
+        steps: steps.map(text => ({
+            text: text,
             completed: false
-
         })),
 
         completed: false
@@ -320,101 +462,277 @@ function createQuest() {
     };
 
 
-    player.quests.push(quest);
+    if (currentQuestType === "side") {
+
+        game.sideQuests.push(quest);
+
+    } else {
+
+        game.mainQuests.push(quest);
+
+    }
 
 
     saveGame();
 
-    updateDisplay();
-
     closeQuestCreator();
 
-    resetQuestCreator();
+    renderAll();
 
 }
 
 
-// -------------------------
-// RESET QUEST CREATOR
-// -------------------------
+/* ================================= */
+/* COMPLETE QUEST STEP */
+/* ================================= */
 
-function resetQuestCreator() {
+function toggleStep(questId, type, stepIndex) {
 
-    document.getElementById("questName").value = "";
-
-    document.getElementById("questDescription").value = "";
-
-    document.getElementById("intelligenceReward").value = 0;
-
-    document.getElementById("compassionReward").value = 0;
-
-    document.getElementById("courageReward").value = 0;
-
-    document.getElementById("diamondReward").value = 10;
+    const quests =
+        type === "side"
+            ? game.sideQuests
+            : game.mainQuests;
 
 
-    document.getElementById("stepInputs").innerHTML = `
+    const quest = quests.find(q => q.id === questId);
 
-        <div class="step-input">
+    if (!quest) {
+        return;
+    }
 
-            <span>1.</span>
 
-            <input
-                type="text"
-                placeholder="What do you need to do?"
-            >
+    quest.steps[stepIndex].completed =
+        !quest.steps[stepIndex].completed;
 
-        </div>
 
-    `;
+    const allComplete =
+        quest.steps.every(step => step.completed);
+
+
+    if (allComplete && !quest.completed) {
+
+        completeQuest(quest, type);
+
+        return;
+    }
+
+
+    saveGame();
+
+    renderAll();
 
 }
 
 
-// -------------------------
-// RENDER QUESTS
-// -------------------------
+/* ================================= */
+/* COMPLETE QUEST */
+/* ================================= */
 
-function renderQuests() {
+function completeQuest(quest, type) {
+
+    quest.completed = true;
+
+
+    addXP(
+        "organisation",
+        quest.rewards.organisation
+    );
+
+    addXP(
+        "wellbeing",
+        quest.rewards.wellbeing
+    );
+
+    addXP(
+        "intelligence",
+        quest.rewards.intelligence
+    );
+
+    addXP(
+        "development",
+        quest.rewards.development
+    );
+
+
+    game.diamonds +=
+        Number(quest.rewards.diamonds) || 0;
+
+
+    let bonusMessage = "";
+
+
+    /* SIDE QUEST BONUS */
+
+    if (type === "side") {
+
+        const randomItem =
+            shopItems[
+                Math.floor(
+                    Math.random() * shopItems.length
+                )
+            ];
+
+        game.inventory.push(randomItem.id);
+
+        bonusMessage =
+            `\n🎁 Bonus item: ${randomItem.icon} ${randomItem.name}`;
+    }
+
+
+    saveGame();
+
+    renderAll();
+
+
+    alert(
+        `✨ QUEST COMPLETE!\n\n${quest.name}\n\n` +
+        `💎 +${quest.rewards.diamonds} diamonds` +
+        bonusMessage
+    );
+
+
+    /* REMOVE COMPLETED QUEST */
+
+    setTimeout(() => {
+
+        const quests =
+            type === "side"
+                ? game.sideQuests
+                : game.mainQuests;
+
+
+        const index =
+            quests.findIndex(q => q.id === quest.id);
+
+
+        if (index !== -1) {
+
+            quests.splice(index, 1);
+
+            saveGame();
+
+            renderAll();
+
+        }
+
+    }, 100);
+
+}
+
+
+/* ================================= */
+/* RENDER STATS */
+/* ================================= */
+
+function renderStats() {
+
+    const categories = [
+        "organisation",
+        "wellbeing",
+        "intelligence",
+        "development"
+    ];
+
+
+    categories.forEach(category => {
+
+        const stat = game.stats[category];
+
+        const required =
+            xpRequired(stat.level);
+
+
+        const percentage =
+            Math.min(
+                100,
+                (stat.xp / required) * 100
+            );
+
+
+        document.getElementById(
+            `${category}Level`
+        ).textContent =
+            `Lv. ${stat.level}`;
+
+
+        document.getElementById(
+            `${category}XP`
+        ).textContent =
+            `${stat.xp} / ${required} XP`;
+
+
+        document.getElementById(
+            `${category}Bar`
+        ).style.width =
+            `${percentage}%`;
+
+    });
+
+
+    document.getElementById(
+        "diamondCount"
+    ).textContent =
+        game.diamonds;
+
+
+    document.getElementById(
+        "shopDiamondCount"
+    ).textContent =
+        game.diamonds;
+
+}
+
+
+/* ================================= */
+/* RENDER QUESTS */
+/* ================================= */
+
+function renderQuestList(type) {
+
+    const quests =
+        type === "side"
+            ? game.sideQuests
+            : game.mainQuests;
+
 
     const container =
-        document.getElementById("questList");
+        document.getElementById(
+            type === "side"
+                ? "sideQuestList"
+                : "mainQuestList"
+        );
 
 
-    if (player.quests.length === 0) {
+    container.innerHTML = "";
+
+
+    if (quests.length === 0) {
 
         container.innerHTML = `
 
             <div class="empty-state">
 
-                <div class="empty-icon">🗺️</div>
+                <div class="empty-icon">
+                    ${type === "side" ? "✨" : "📜"}
+                </div>
 
-                <h3>Your adventure awaits.</h3>
+                <h3>
+                    No active ${type === "side" ? "side quests" : "main quests"}
+                </h3>
 
                 <p>
-                    Create your first quest to get started.
+                    Your next adventure is waiting for you.
                 </p>
-
-                <button
-                    onclick="openQuestCreator()"
-                    class="primary-button"
-                >
-                    Create Your First Quest
-                </button>
 
             </div>
 
         `;
 
         return;
-
     }
 
 
-    container.innerHTML = "";
-
-
-    player.quests.forEach(quest => {
+    quests.forEach(quest => {
 
         const card =
             document.createElement("div");
@@ -422,121 +740,78 @@ function renderQuests() {
         card.className = "quest-card";
 
 
-        const completedSteps =
-            quest.steps.filter(
-                step => step.completed
-            ).length;
+        const rewardText = [];
 
+        if (quest.rewards.organisation > 0)
+            rewardText.push(`🧹 +${quest.rewards.organisation}`);
 
-        const percentage =
-            Math.round(
-                (completedSteps /
-                quest.steps.length) * 100
-            );
+        if (quest.rewards.wellbeing > 0)
+            rewardText.push(`🌿 +${quest.rewards.wellbeing}`);
 
+        if (quest.rewards.intelligence > 0)
+            rewardText.push(`🧠 +${quest.rewards.intelligence}`);
 
-        const stepsHTML =
-            quest.steps.map(
-                (step, index) => `
+        if (quest.rewards.development > 0)
+            rewardText.push(`✨ +${quest.rewards.development}`);
 
-                <label
-                    class="quest-step ${
-                        step.completed
-                            ? "completed"
-                            : ""
-                    }"
-                >
-
-                    <input
-                        type="checkbox"
-                        ${
-                            step.completed
-                                ? "checked"
-                                : ""
-                        }
-                        onchange="
-                            toggleStep(
-                                ${quest.id},
-                                ${index}
-                            )
-                        "
-                    >
-
-                    <span>
-                        ${step.text}
-                    </span>
-
-                </label>
-
-            `
-            ).join("");
+        if (quest.rewards.diamonds > 0)
+            rewardText.push(`💎 +${quest.rewards.diamonds}`);
 
 
         card.innerHTML = `
 
-            <h3>📜 ${quest.name}</h3>
+            <div class="quest-header">
 
-            <p class="quest-description">
-                ${quest.description}
-            </p>
+                <div>
 
-            <p>
-                <strong>
-                    ${completedSteps}/${quest.steps.length}
-                    steps completed
-                </strong>
-                · ${percentage}%
-            </p>
+                    <h3>${escapeHTML(quest.name)}</h3>
 
-            ${stepsHTML}
+                    <p class="quest-description">
+                        ${escapeHTML(
+                            quest.description ||
+                            "Complete the steps below."
+                        )}
+                    </p>
 
-            <div class="quest-rewards">
+                </div>
 
-                ${
-                    quest.rewards.intelligence > 0
-                    ? `🧠 +${quest.rewards.intelligence} XP`
-                    : ""
-                }
-
-                ${
-                    quest.rewards.compassion > 0
-                    ? `💗 +${quest.rewards.compassion} XP`
-                    : ""
-                }
-
-                ${
-                    quest.rewards.courage > 0
-                    ? `🛡️ +${quest.rewards.courage} XP`
-                    : ""
-                }
-
-                ${
-                    quest.rewards.diamonds > 0
-                    ? `💎 +${quest.rewards.diamonds}`
-                    : ""
-                }
+                <div class="quest-reward">
+                    ${rewardText.join(" · ")}
+                </div>
 
             </div>
 
 
-            ${
-                percentage === 100 && !quest.completed
+            <div class="quest-steps">
 
-                ? `
+                ${quest.steps.map((step, index) => `
 
-                    <button
-                        class="primary-button quest-complete"
-                        onclick="
-                            completeQuest(${quest.id})
-                        "
-                    >
-                        ✨ Complete Quest
-                    </button>
+                    <label class="
+                        quest-step
+                        ${step.completed ? "completed" : ""}
+                    ">
 
-                `
+                        <input
+                            type="checkbox"
+                            ${step.completed ? "checked" : ""}
+                            onchange="
+                                toggleStep(
+                                    ${quest.id},
+                                    '${type}',
+                                    ${index}
+                                )
+                            "
+                        >
 
-                : ""
-            }
+                        <span>
+                            ${escapeHTML(step.text)}
+                        </span>
+
+                    </label>
+
+                `).join("")}
+
+            </div>
 
         `;
 
@@ -548,88 +823,277 @@ function renderQuests() {
 }
 
 
-// -------------------------
-// TOGGLE STEP
-// -------------------------
+/* ================================= */
+/* SHOP */
+/* ================================= */
 
-function toggleStep(questID, stepIndex) {
+function renderShop() {
 
-    const quest =
-        player.quests.find(
-            q => q.id === questID
-        );
+    const container =
+        document.getElementById("shopGrid");
 
 
-    if (!quest) return;
+    container.innerHTML = "";
 
 
-    quest.steps[stepIndex].completed =
-        !quest.steps[stepIndex].completed;
+    shopItems.forEach(item => {
+
+        const owned =
+            game.inventory.includes(item.id);
 
 
-    saveGame();
+        const canAfford =
+            game.diamonds >= item.price;
 
-    updateDisplay();
+
+        const card =
+            document.createElement("div");
+
+        card.className = "shop-item";
+
+
+        card.innerHTML = `
+
+            <div class="shop-icon">
+                ${item.icon}
+            </div>
+
+            <h3>
+                ${item.name}
+            </h3>
+
+            <p>
+                ${item.description}
+            </p>
+
+            <div class="price">
+                💎 ${item.price}
+            </div>
+
+            <button
+                class="buy-button"
+                onclick="buyItem('${item.id}')"
+                ${(!canAfford || owned) ? "disabled" : ""}
+            >
+
+                ${
+                    owned
+                        ? "✓ Owned"
+                        : canAfford
+                            ? "Buy"
+                            : "Not enough diamonds"
+                }
+
+            </button>
+
+        `;
+
+
+        container.appendChild(card);
+
+    });
 
 }
 
 
-// -------------------------
-// COMPLETE QUEST
-// -------------------------
+/* ================================= */
+/* BUY SHOP ITEM */
+/* ================================= */
 
-function completeQuest(questID) {
+function buyItem(itemId) {
 
-    const quest =
-        player.quests.find(
-            q => q.id === questID
+    const item =
+        shopItems.find(
+            item => item.id === itemId
         );
 
 
-    if (!quest || quest.completed) return;
+    if (!item) {
+        return;
+    }
 
 
-    quest.completed = true;
+    if (game.inventory.includes(item.id)) {
+
+        alert("You already own this item!");
+
+        return;
+    }
 
 
-    addXP(
-        "intelligence",
-        quest.rewards.intelligence
-    );
+    if (game.diamonds < item.price) {
 
-    addXP(
-        "compassion",
-        quest.rewards.compassion
-    );
+        alert("You don't have enough diamonds yet!");
 
-    addXP(
-        "courage",
-        quest.rewards.courage
-    );
+        return;
+    }
 
 
-    player.diamonds +=
-        quest.rewards.diamonds;
+    game.diamonds -= item.price;
+
+    game.inventory.push(item.id);
+
+
+    saveGame();
+
+    renderAll();
 
 
     alert(
-        `✨ QUEST COMPLETE! ✨\n\n` +
-        `${quest.name}\n\n` +
-        `You earned ${quest.rewards.diamonds} 💎`
+        `🎉 Purchased!\n\n${item.icon} ${item.name}`
     );
-
-
-    saveGame();
-
-    updateDisplay();
 
 }
 
 
-// -------------------------
-// START GAME
-// -------------------------
+/* ================================= */
+/* INVENTORY */
+/* ================================= */
 
-loadGame();
+function renderInventory() {
 
-updateDisplay();
+    const container =
+        document.getElementById(
+            "inventoryGrid"
+        );
+
+
+    container.innerHTML = "";
+
+
+    if (game.inventory.length === 0) {
+
+        container.innerHTML = `
+
+            <div class="empty-state">
+
+                <div class="empty-icon">
+                    🎒
+                </div>
+
+                <h3>
+                    Your inventory is empty
+                </h3>
+
+                <p>
+                    Complete side quests or visit the shop to collect items.
+                </p>
+
+            </div>
+
+        `;
+
+        return;
+    }
+
+
+    game.inventory.forEach(itemId => {
+
+        const item =
+            shopItems.find(
+                item => item.id === itemId
+            );
+
+
+        if (!item) {
+            return;
+        }
+
+
+        const card =
+            document.createElement("div");
+
+        card.className =
+            "inventory-item";
+
+
+        card.innerHTML = `
+
+            <div class="inventory-icon">
+                ${item.icon}
+            </div>
+
+            <h3>
+                ${item.name}
+            </h3>
+
+            <p>
+                ${item.description}
+            </p>
+
+        `;
+
+
+        container.appendChild(card);
+
+    });
+
+}
+
+
+/* ================================= */
+/* ESCAPE HTML */
+/* ================================= */
+
+function escapeHTML(text) {
+
+    const div =
+        document.createElement("div");
+
+    div.textContent = text;
+
+    return div.innerHTML;
+
+}
+
+
+/* ================================= */
+/* RENDER EVERYTHING */
+/* ================================= */
+
+function renderAll() {
+
+    renderStats();
+
+    renderQuestList("main");
+
+    renderQuestList("side");
+
+    renderShop();
+
+    renderInventory();
+
+}
+
+
+/* ================================= */
+/* CLOSE MODAL WHEN CLICKING OUTSIDE */
+/* ================================= */
+
+document
+    .getElementById("questModal")
+    .addEventListener("click", function(event) {
+
+        if (event.target === this) {
+
+            closeQuestCreator();
+
+        }
+
+    });
+
+
+/* ================================= */
+/* FORM SUBMISSION */
+/* ================================= */
+
+document
+    .getElementById("questForm")
+    .addEventListener("submit", createQuest);
+
+
+/* ================================= */
+/* INITIAL LOAD */
+/* ================================= */
+
+renderAll();
