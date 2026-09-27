@@ -1,214 +1,667 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
     <title>My Life RPG</title>
+
     <link rel="stylesheet" href="style.css">
+
 </head>
+
 
 <body>
 
-    <header>
-        <div>
-            <h1>✦ My Life RPG ✦</h1>
-            <p>Turn your real life into an adventure.</p>
-        </div>
+<header>
 
-        <div class="diamonds">
-            💎 <span id="diamondCount">0</span>
-        </div>
-    </header>
+    <div>
 
-    <main>
+        <h1>✦ My Life RPG ✦</h1>
 
-        <!-- CHARACTER STATS -->
-        <section class="stats-section">
-
-            <div class="stat-card intelligence">
-                <div class="stat-title">
-                    <span>🧠 Intelligence</span>
-                    <span>Lv. <span id="intelligenceLevel">1</span></span>
-                </div>
-
-                <div class="xp-bar">
-                    <div id="intelligenceBar" class="xp-fill"></div>
-                </div>
-
-                <p>
-                    <span id="intelligenceXP">0</span> /
-                    <span id="intelligenceRequired">50</span> XP
-                </p>
-            </div>
-
-
-            <div class="stat-card compassion">
-                <div class="stat-title">
-                    <span>💗 Compassion</span>
-                    <span>Lv. <span id="compassionLevel">1</span></span>
-                </div>
-
-                <div class="xp-bar">
-                    <div id="compassionBar" class="xp-fill"></div>
-                </div>
-
-                <p>
-                    <span id="compassionXP">0</span> /
-                    <span id="compassionRequired">50</span> XP
-                </p>
-            </div>
-
-
-            <div class="stat-card courage">
-                <div class="stat-title">
-                    <span>🛡️ Courage</span>
-                    <span>Lv. <span id="courageLevel">1</span></span>
-                </div>
-
-                <div class="xp-bar">
-                    <div id="courageBar" class="xp-fill"></div>
-                </div>
-
-                <p>
-                    <span id="courageXP">0</span> /
-                    <span id="courageRequired">50</span> XP
-                </p>
-            </div>
-
-        </section>
-
-
-        <!-- QUESTS -->
-        <section class="quests-section">
-
-            <div class="section-heading">
-                <div>
-                    <h2>📜 Active Quests</h2>
-                    <p>Complete quests to develop your character.</p>
-                </div>
-
-                <button onclick="openQuestCreator()" class="primary-button">
-                    ＋ Create Quest
-                </button>
-            </div>
-
-
-            <div id="questList">
-
-                <div class="empty-state" id="emptyState">
-                    <div class="empty-icon">🗺️</div>
-                    <h3>Your adventure awaits.</h3>
-                    <p>Create your first quest to get started.</p>
-                    <button onclick="openQuestCreator()" class="primary-button">
-                        Create Your First Quest
-                    </button>
-                </div>
-
-            </div>
-
-        </section>
-
-    </main>
-
-
-    <!-- QUEST CREATOR -->
-    <div id="questModal" class="modal hidden">
-
-        <div class="modal-content">
-
-            <button class="close-button" onclick="closeQuestCreator()">×</button>
-
-            <h2>✨ Create a Quest</h2>
-            <p class="modal-subtitle">
-                Decide what adventure you want to take on.
-            </p>
-
-
-            <label>Quest Name</label>
-            <input
-                type="text"
-                id="questName"
-                placeholder="e.g. Restore My Study Space"
-            >
-
-
-            <label>Description</label>
-            <textarea
-                id="questDescription"
-                placeholder="What are you trying to accomplish?"
-            ></textarea>
-
-
-            <h3>🎁 Rewards</h3>
-
-            <div class="reward-grid">
-
-                <div>
-                    <label>🧠 Intelligence XP</label>
-                    <input type="number" id="intelligenceReward" value="0" min="0">
-                </div>
-
-                <div>
-                    <label>💗 Compassion XP</label>
-                    <input type="number" id="compassionReward" value="0" min="0">
-                </div>
-
-                <div>
-                    <label>🛡️ Courage XP</label>
-                    <input type="number" id="courageReward" value="0" min="0">
-                </div>
-
-                <div>
-                    <label>💎 Diamonds</label>
-                    <input type="number" id="diamondReward" value="10" min="0">
-                </div>
-
-            </div>
-
-
-            <h3>🧩 Quest Steps</h3>
-
-            <div id="stepInputs">
-
-                <div class="step-input">
-                    <span>1.</span>
-                    <input
-                        type="text"
-                        placeholder="What do you need to do?"
-                    >
-                </div>
-
-            </div>
-
-            <button onclick="addStep()" class="secondary-button">
-                ＋ Add Step
-            </button>
-
-
-            <div class="modal-actions">
-
-                <button
-                    onclick="closeQuestCreator()"
-                    class="secondary-button"
-                >
-                    Cancel
-                </button>
-
-                <button
-                    onclick="createQuest()"
-                    class="primary-button"
-                >
-                    Create Quest
-                </button>
-
-            </div>
-
-        </div>
+        <p>
+            Turn your real life into an adventure.
+        </p>
 
     </div>
 
 
-    <script src="script.js"></script>
+    <div class="diamonds">
+
+        💎 <span id="diamondCount">0</span>
+
+    </div>
+
+</header>
+
+
+<main>
+
+
+    <!-- NAVIGATION -->
+
+    <nav class="main-nav">
+
+        <button
+            class="nav-button active"
+            onclick="showTab('mainQuests', this)"
+        >
+            📜 Main Quests
+        </button>
+
+
+        <button
+            class="nav-button"
+            onclick="showTab('sideQuests', this)"
+        >
+            ✨ Side Quests
+        </button>
+
+
+        <button
+            class="nav-button"
+            onclick="showTab('shop', this)"
+        >
+            💎 Shop
+        </button>
+
+
+        <button
+            class="nav-button"
+            onclick="showTab('inventory', this)"
+        >
+            🎒 Inventory
+        </button>
+
+    </nav>
+
+
+
+    <!-- CHARACTER STATS -->
+
+    <section class="stats-section">
+
+
+        <div class="stat-card organisation">
+
+            <div class="stat-title">
+
+                <span>
+                    🧹 Organisation
+                </span>
+
+                <span>
+                    Lv.
+                    <span id="organisationLevel">
+                        1
+                    </span>
+                </span>
+
+            </div>
+
+
+            <div class="xp-bar">
+
+                <div
+                    id="organisationBar"
+                    class="xp-fill"
+                ></div>
+
+            </div>
+
+
+            <p>
+
+                <span id="organisationXP">
+                    0
+                </span>
+
+                /
+
+                <span id="organisationRequired">
+                    50
+                </span>
+
+                XP
+
+            </p>
+
+        </div>
+
+
+
+        <div class="stat-card wellbeing">
+
+            <div class="stat-title">
+
+                <span>
+                    🌿 Wellbeing
+                </span>
+
+                <span>
+                    Lv.
+                    <span id="wellbeingLevel">
+                        1
+                    </span>
+                </span>
+
+            </div>
+
+
+            <div class="xp-bar">
+
+                <div
+                    id="wellbeingBar"
+                    class="xp-fill"
+                ></div>
+
+            </div>
+
+
+            <p>
+
+                <span id="wellbeingXP">
+                    0
+                </span>
+
+                /
+
+                <span id="wellbeingRequired">
+                    50
+                </span>
+
+                XP
+
+            </p>
+
+        </div>
+
+
+
+        <div class="stat-card intelligence">
+
+            <div class="stat-title">
+
+                <span>
+                    🧠 Intelligence
+                </span>
+
+                <span>
+                    Lv.
+                    <span id="intelligenceLevel">
+                        1
+                    </span>
+                </span>
+
+            </div>
+
+
+            <div class="xp-bar">
+
+                <div
+                    id="intelligenceBar"
+                    class="xp-fill"
+                ></div>
+
+            </div>
+
+
+            <p>
+
+                <span id="intelligenceXP">
+                    0
+                </span>
+
+                /
+
+                <span id="intelligenceRequired">
+                    50
+                </span>
+
+                XP
+
+            </p>
+
+        </div>
+
+
+
+        <div class="stat-card development">
+
+            <div class="stat-title">
+
+                <span>
+                    ✨ Personal Development
+                </span>
+
+                <span>
+                    Lv.
+                    <span id="developmentLevel">
+                        1
+                    </span>
+                </span>
+
+            </div>
+
+
+            <div class="xp-bar">
+
+                <div
+                    id="developmentBar"
+                    class="xp-fill"
+                ></div>
+
+            </div>
+
+
+            <p>
+
+                <span id="developmentXP">
+                    0
+                </span>
+
+                /
+
+                <span id="developmentRequired">
+                    50
+                </span>
+
+                XP
+
+            </p>
+
+        </div>
+
+
+    </section>
+
+
+
+    <!-- MAIN QUESTS -->
+
+    <section
+        id="mainQuests"
+        class="tab-content"
+    >
+
+        <div class="section-heading">
+
+            <div>
+
+                <h2>
+                    📜 Main Quests
+                </h2>
+
+                <p>
+                    Your important adventures and goals.
+                </p>
+
+            </div>
+
+
+            <button
+                onclick="openQuestCreator('main')"
+                class="primary-button"
+            >
+                ＋ Create Quest
+            </button>
+
+        </div>
+
+
+        <div id="mainQuestList">
+
+        </div>
+
+    </section>
+
+
+
+    <!-- SIDE QUESTS -->
+
+    <section
+        id="sideQuests"
+        class="tab-content hidden-tab"
+    >
+
+        <div class="section-heading">
+
+            <div>
+
+                <h2>
+                    ✨ Side Quests
+                </h2>
+
+                <p>
+                    Little adventures, optional challenges and fun things.
+                </p>
+
+            </div>
+
+
+            <button
+                onclick="openQuestCreator('side')"
+                class="primary-button"
+            >
+                ＋ Create Side Quest
+            </button>
+
+        </div>
+
+
+        <div class="side-quest-info">
+
+            <span>🎲</span>
+
+            <div>
+
+                <strong>
+                    Side quests have special rewards!
+                </strong>
+
+                <p>
+                    Earn extra diamonds or discover random items.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div id="sideQuestList">
+
+        </div>
+
+    </section>
+
+
+
+    <!-- SHOP -->
+
+    <section
+        id="shop"
+        class="tab-content hidden-tab"
+    >
+
+        <div class="section-heading">
+
+            <div>
+
+                <h2>
+                    💎 Diamond Shop
+                </h2>
+
+                <p>
+                    Spend your hard-earned diamonds.
+                </p>
+
+            </div>
+
+            <div class="shop-balance">
+                💎 <span id="shopDiamondCount">0</span>
+            </div>
+
+        </div>
+
+
+        <div
+            id="shopItems"
+            class="shop-grid"
+        >
+
+        </div>
+
+    </section>
+
+
+
+    <!-- INVENTORY -->
+
+    <section
+        id="inventory"
+        class="tab-content hidden-tab"
+    >
+
+        <div class="section-heading">
+
+            <div>
+
+                <h2>
+                    🎒 My Collection
+                </h2>
+
+                <p>
+                    Everything you've earned and purchased.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div
+            id="inventoryItems"
+            class="shop-grid"
+        >
+
+        </div>
+
+    </section>
+
+
+</main>
+
+
+
+<!-- QUEST CREATOR -->
+
+<div
+    id="questModal"
+    class="modal hidden"
+>
+
+    <div class="modal-content">
+
+
+        <button
+            class="close-button"
+            onclick="closeQuestCreator()"
+        >
+            ×
+        </button>
+
+
+        <h2 id="questCreatorTitle">
+            ✨ Create a Quest
+        </h2>
+
+
+        <p class="modal-subtitle">
+
+            Decide what adventure you want to take on.
+
+        </p>
+
+
+
+        <label>
+            Quest Name
+        </label>
+
+        <input
+            type="text"
+            id="questName"
+            placeholder="e.g. Restore My Study Space"
+        >
+
+
+
+        <label>
+            Description
+        </label>
+
+        <textarea
+            id="questDescription"
+            placeholder="What are you trying to accomplish?"
+        ></textarea>
+
+
+
+        <h3>
+            🎁 Rewards
+        </h3>
+
+
+        <div class="reward-grid">
+
+
+            <div>
+
+                <label>
+                    🧹 Organisation XP
+                </label>
+
+                <input
+                    type="number"
+                    id="organisationReward"
+                    value="0"
+                    min="0"
+                >
+
+            </div>
+
+
+            <div>
+
+                <label>
+                    🌿 Wellbeing XP
+                </label>
+
+                <input
+                    type="number"
+                    id="wellbeingReward"
+                    value="0"
+                    min="0"
+                >
+
+            </div>
+
+
+            <div>
+
+                <label>
+                    🧠 Intelligence XP
+                </label>
+
+                <input
+                    type="number"
+                    id="intelligenceReward"
+                    value="0"
+                    min="0"
+                >
+
+            </div>
+
+
+            <div>
+
+                <label>
+                    ✨ Development XP
+                </label>
+
+                <input
+                    type="number"
+                    id="developmentReward"
+                    value="0"
+                    min="0"
+                >
+
+            </div>
+
+
+            <div>
+
+                <label>
+                    💎 Diamonds
+                </label>
+
+                <input
+                    type="number"
+                    id="diamondReward"
+                    value="10"
+                    min="0"
+                >
+
+            </div>
+
+        </div>
+
+
+
+        <h3>
+            🧩 Quest Steps
+        </h3>
+
+
+        <div id="stepInputs">
+
+            <div class="step-input">
+
+                <span>1.</span>
+
+                <input
+                    type="text"
+                    placeholder="What do you need to do?"
+                >
+
+            </div>
+
+        </div>
+
+
+        <button
+            onclick="addStep()"
+            class="secondary-button"
+        >
+            ＋ Add Step
+        </button>
+
+
+
+        <div class="modal-actions">
+
+            <button
+                onclick="closeQuestCreator()"
+                class="secondary-button"
+            >
+                Cancel
+            </button>
+
+
+            <button
+                onclick="createQuest()"
+                class="primary-button"
+            >
+                Create Quest
+            </button>
+
+        </div>
+
+
+    </div>
+
+</div>
+
+
+
+<script src="script.js"></script>
 
 </body>
+
 </html>
