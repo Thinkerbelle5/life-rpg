@@ -75,32 +75,32 @@ const shopItems = [
         price: 500,
         description: "Ready for every quest."
     },
-    
+
     {
-    id: "flowers",
-    name: "Flower Bouquet",
-    icon: "💐",
-    price: 75,
-    description: "A little reward for yourself.",
-    repeatable: true
+        id: "flowers",
+        name: "Flower Bouquet",
+        icon: "💐",
+        price: 75,
+        description: "A little reward for yourself.",
+        repeatable: true
     },
 
     {
-         id: "plant",
-    name: "Little Plant",
-    icon: "🪴",
-    price: 100,
-    description: "Add some greenery to your room.",
-    repeatable: true
-      },
+        id: "plant",
+        name: "Little Plant",
+        icon: "🪴",
+        price: 100,
+        description: "Add some greenery to your room.",
+        repeatable: true
+    },
 
     {
         id: "bookshelf",
-    name: "Bookshelf",
-    icon: "📚",
-    price: 300,
-    description: "For your growing collection.",
-    repeatable: true
+        name: "Bookshelf",
+        icon: "📚",
+        price: 300,
+        description: "For your growing collection.",
+        repeatable: true
     },
 
     {
@@ -149,10 +149,12 @@ function loadGame() {
         return {
             ...structuredClone(defaultGame),
             ...old,
+
             stats: {
                 ...structuredClone(defaultGame.stats),
                 ...(old.stats || {})
             },
+
             mainQuests: old.mainQuests || [],
             sideQuests: old.sideQuests || [],
             inventory: old.inventory || []
@@ -168,7 +170,12 @@ function loadGame() {
 
 
 function saveGame() {
-    localStorage.setItem("lifeRPG", JSON.stringify(game));
+
+    localStorage.setItem(
+        "lifeRPG",
+        JSON.stringify(game)
+    );
+
 }
 
 
@@ -205,13 +212,15 @@ function addXP(category, amount) {
 
         stat.level++;
 
-        const diamondReward = 10 + stat.level * 5;
+        const diamondReward =
+            10 + stat.level * 5;
 
         game.diamonds += diamondReward;
 
         alert(
             `✨ LEVEL UP!\n\n${formatCategory(category)} reached Level ${stat.level}!\n\n💎 +${diamondReward} diamonds`
         );
+
     }
 
 }
@@ -224,13 +233,19 @@ function addXP(category, amount) {
 function formatCategory(category) {
 
     const names = {
+
         organisation: "Organisation",
+
         wellbeing: "Wellbeing",
+
         intelligence: "Intelligence",
+
         development: "Personal Development"
+
     };
 
     return names[category] || category;
+
 }
 
 
@@ -240,25 +255,46 @@ function formatCategory(category) {
 
 function showTab(tabId, button) {
 
-    document.querySelectorAll(".tab-section").forEach(section => {
-        section.classList.remove("active-tab");
-    });
+    document
+        .querySelectorAll(".tab-section")
+        .forEach(section => {
 
-    document.querySelectorAll(".nav-button").forEach(btn => {
-        btn.classList.remove("active");
-    });
+            section.classList.remove("active-tab");
 
-    const selectedTab = document.getElementById(tabId);
+        });
+
+
+    document
+        .querySelectorAll(".nav-button")
+        .forEach(btn => {
+
+            btn.classList.remove("active");
+
+        });
+
+
+    const selectedTab =
+        document.getElementById(tabId);
+
 
     if (selectedTab) {
-        selectedTab.classList.add("active-tab");
+
+        selectedTab.classList.add(
+            "active-tab"
+        );
+
     }
+
 
     if (button) {
+
         button.classList.add("active");
+
     }
 
+
     renderAll();
+
 }
 
 
@@ -270,25 +306,45 @@ function openQuestCreator(type = "main") {
 
     currentQuestType = type;
 
-    const modal = document.getElementById("questModal");
+    const modal =
+        document.getElementById("questModal");
 
-    const title = document.getElementById("modalTitle");
+    const title =
+        document.getElementById("modalTitle");
+
 
     if (type === "side") {
-        title.textContent = "Create Side Quest";
+
+        title.textContent =
+            "Create Side Quest";
+
     } else {
-        title.textContent = "Create Quest";
+
+        title.textContent =
+            "Create Quest";
+
     }
 
-    document.getElementById("questForm").reset();
 
-    document.getElementById("diamondReward").value = 10;
+    document
+        .getElementById("questForm")
+        .reset();
 
-    document.getElementById("stepInputs").innerHTML = "";
+
+    document
+        .getElementById("diamondReward")
+        .value = 10;
+
+
+    document
+        .getElementById("stepInputs")
+        .innerHTML = "";
+
 
     stepCount = 0;
 
     addStep();
+
 
     modal.classList.add("open");
 
@@ -299,7 +355,10 @@ function openQuestCreator(type = "main") {
 
 function closeQuestCreator() {
 
-    document.getElementById("questModal").classList.remove("open");
+    document
+        .getElementById("questModal")
+        .classList.remove("open");
+
 
     document.body.style.overflow = "";
 
@@ -314,11 +373,16 @@ function addStep() {
 
     stepCount++;
 
-    const container = document.getElementById("stepInputs");
+    const container =
+        document.getElementById("stepInputs");
 
-    const row = document.createElement("div");
+
+    const row =
+        document.createElement("div");
+
 
     row.className = "step-row";
+
 
     row.innerHTML = `
 
@@ -344,6 +408,7 @@ function addStep() {
 
     `;
 
+
     container.appendChild(row);
 
 }
@@ -355,7 +420,9 @@ function addStep() {
 
 function removeStep(button) {
 
-    const row = button.parentElement;
+    const row =
+        button.parentElement;
+
 
     row.remove();
 
@@ -366,14 +433,21 @@ function removeStep(button) {
 
 function renumberSteps() {
 
-    const rows = document.querySelectorAll(".step-row");
+    const rows =
+        document.querySelectorAll(
+            ".step-row"
+        );
+
 
     rows.forEach((row, index) => {
 
-        row.querySelector(".step-number").textContent =
+        row.querySelector(
+            ".step-number"
+        ).textContent =
             `${index + 1}.`;
 
     });
+
 
     stepCount = rows.length;
 
@@ -388,38 +462,80 @@ function createQuest(event) {
 
     event.preventDefault();
 
+
     const name =
-        document.getElementById("questName").value.trim();
+        document
+            .getElementById("questName")
+            .value
+            .trim();
+
 
     const description =
-        document.getElementById("questDescription").value.trim();
+        document
+            .getElementById("questDescription")
+            .value
+            .trim();
+
 
     const organisation =
-        Number(document.getElementById("organisationReward").value) || 0;
+        Number(
+            document
+                .getElementById("organisationReward")
+                .value
+        ) || 0;
+
 
     const wellbeing =
-        Number(document.getElementById("wellbeingReward").value) || 0;
+        Number(
+            document
+                .getElementById("wellbeingReward")
+                .value
+        ) || 0;
+
 
     const intelligence =
-        Number(document.getElementById("intelligenceReward").value) || 0;
+        Number(
+            document
+                .getElementById("intelligenceReward")
+                .value
+        ) || 0;
+
 
     const development =
-        Number(document.getElementById("developmentReward").value) || 0;
+        Number(
+            document
+                .getElementById("developmentReward")
+                .value
+        ) || 0;
+
 
     const diamonds =
-        Number(document.getElementById("diamondReward").value) || 0;
+        Number(
+            document
+                .getElementById("diamondReward")
+                .value
+        ) || 0;
 
 
-    const steps = Array.from(
-        document.querySelectorAll(".step-input")
-    )
-    .map(input => input.value.trim())
-    .filter(value => value !== "");
+    const steps =
+        Array.from(
+            document.querySelectorAll(
+                ".step-input"
+            )
+        )
+        .map(input =>
+            input.value.trim()
+        )
+        .filter(value =>
+            value !== ""
+        );
 
 
     if (!name) {
 
-        alert("Please give your quest a name!");
+        alert(
+            "Please give your quest a name!"
+        );
 
         return;
     }
@@ -427,7 +543,9 @@ function createQuest(event) {
 
     if (steps.length === 0) {
 
-        alert("Please add at least one quest step!");
+        alert(
+            "Please add at least one quest step!"
+        );
 
         return;
     }
@@ -456,8 +574,11 @@ function createQuest(event) {
         },
 
         steps: steps.map(text => ({
+
             text: text,
+
             completed: false
+
         })),
 
         completed: false
@@ -489,7 +610,11 @@ function createQuest(event) {
 /* COMPLETE QUEST STEP */
 /* ================================= */
 
-function toggleStep(questId, type, stepIndex) {
+function toggleStep(
+    questId,
+    type,
+    stepIndex
+) {
 
     const quests =
         type === "side"
@@ -497,7 +622,11 @@ function toggleStep(questId, type, stepIndex) {
             : game.mainQuests;
 
 
-    const quest = quests.find(q => q.id === questId);
+    const quest =
+        quests.find(
+            q => q.id === questId
+        );
+
 
     if (!quest) {
         return;
@@ -509,12 +638,20 @@ function toggleStep(questId, type, stepIndex) {
 
 
     const allComplete =
-        quest.steps.every(step => step.completed);
+        quest.steps.every(
+            step => step.completed
+        );
 
 
-    if (allComplete && !quest.completed) {
+    if (
+        allComplete &&
+        !quest.completed
+    ) {
 
-        completeQuest(quest, type);
+        completeQuest(
+            quest,
+            type
+        );
 
         return;
     }
@@ -531,7 +668,10 @@ function toggleStep(questId, type, stepIndex) {
 /* COMPLETE QUEST */
 /* ================================= */
 
-function completeQuest(quest, type) {
+function completeQuest(
+    quest,
+    type
+) {
 
     quest.completed = true;
 
@@ -541,15 +681,18 @@ function completeQuest(quest, type) {
         quest.rewards.organisation
     );
 
+
     addXP(
         "wellbeing",
         quest.rewards.wellbeing
     );
 
+
     addXP(
         "intelligence",
         quest.rewards.intelligence
     );
+
 
     addXP(
         "development",
@@ -558,7 +701,9 @@ function completeQuest(quest, type) {
 
 
     game.diamonds +=
-        Number(quest.rewards.diamonds) || 0;
+        Number(
+            quest.rewards.diamonds
+        ) || 0;
 
 
     let bonusMessage = "";
@@ -571,14 +716,20 @@ function completeQuest(quest, type) {
         const randomItem =
             shopItems[
                 Math.floor(
-                    Math.random() * shopItems.length
+                    Math.random() *
+                    shopItems.length
                 )
             ];
 
-        game.inventory.push(randomItem.id);
+
+        game.inventory.push(
+            randomItem.id
+        );
+
 
         bonusMessage =
             `\n🎁 Bonus item: ${randomItem.icon} ${randomItem.name}`;
+
     }
 
 
@@ -605,12 +756,18 @@ function completeQuest(quest, type) {
 
 
         const index =
-            quests.findIndex(q => q.id === quest.id);
+            quests.findIndex(
+                q => q.id === quest.id
+            );
 
 
         if (index !== -1) {
 
-            quests.splice(index, 1);
+            quests.splice(
+                index,
+                1
+            );
+
 
             saveGame();
 
@@ -630,46 +787,60 @@ function completeQuest(quest, type) {
 function renderStats() {
 
     const categories = [
+
         "organisation",
+
         "wellbeing",
+
         "intelligence",
+
         "development"
+
     ];
 
 
-    categories.forEach(category => {
+    categories.forEach(
+        category => {
 
-        const stat = game.stats[category];
-
-        const required =
-            xpRequired(stat.level);
-
-
-        const percentage =
-            Math.min(
-                100,
-                (stat.xp / required) * 100
-            );
+            const stat =
+                game.stats[category];
 
 
-        document.getElementById(
-            `${category}Level`
-        ).textContent =
-            `Lv. ${stat.level}`;
+            const required =
+                xpRequired(
+                    stat.level
+                );
 
 
-        document.getElementById(
-            `${category}XP`
-        ).textContent =
-            `${stat.xp} / ${required} XP`;
+            const percentage =
+                Math.min(
+                    100,
+                    (
+                        stat.xp /
+                        required
+                    ) * 100
+                );
 
 
-        document.getElementById(
-            `${category}Bar`
-        ).style.width =
-            `${percentage}%`;
+            document.getElementById(
+                `${category}Level`
+            ).textContent =
+                `Lv. ${stat.level}`;
 
-    });
+
+            document.getElementById(
+                `${category}XP`
+            ).textContent =
+                `${stat.xp} / ${required} XP`;
+
+
+            document.getElementById(
+                `${category}Bar`
+            ).style.width =
+                `${percentage}%`;
+
+        }
+    );
 
 
     document.getElementById(
@@ -700,9 +871,11 @@ function renderQuestList(type) {
 
     const container =
         document.getElementById(
+
             type === "side"
                 ? "sideQuestList"
                 : "mainQuestList"
+
         );
 
 
@@ -716,11 +889,19 @@ function renderQuestList(type) {
             <div class="empty-state">
 
                 <div class="empty-icon">
-                    ${type === "side" ? "✨" : "📜"}
+                    ${
+                        type === "side"
+                            ? "✨"
+                            : "📜"
+                    }
                 </div>
 
                 <h3>
-                    No active ${type === "side" ? "side quests" : "main quests"}
+                    No active ${
+                        type === "side"
+                            ? "side quests"
+                            : "main quests"
+                    }
                 </h3>
 
                 <p>
@@ -735,93 +916,177 @@ function renderQuestList(type) {
     }
 
 
-    quests.forEach(quest => {
+    quests.forEach(
+        quest => {
 
-        const card =
-            document.createElement("div");
-
-        card.className = "quest-card";
-
-
-        const rewardText = [];
-
-        if (quest.rewards.organisation > 0)
-            rewardText.push(`🧹 +${quest.rewards.organisation}`);
-
-        if (quest.rewards.wellbeing > 0)
-            rewardText.push(`🌿 +${quest.rewards.wellbeing}`);
-
-        if (quest.rewards.intelligence > 0)
-            rewardText.push(`🧠 +${quest.rewards.intelligence}`);
-
-        if (quest.rewards.development > 0)
-            rewardText.push(`✨ +${quest.rewards.development}`);
-
-        if (quest.rewards.diamonds > 0)
-            rewardText.push(`💎 +${quest.rewards.diamonds}`);
+            const card =
+                document.createElement(
+                    "div"
+                );
 
 
-        card.innerHTML = `
+            card.className =
+                "quest-card";
 
-            <div class="quest-header">
 
-                <div>
+            const rewardText = [];
 
-                    <h3>${escapeHTML(quest.name)}</h3>
 
-                    <p class="quest-description">
-                        ${escapeHTML(
-                            quest.description ||
-                            "Complete the steps below."
-                        )}
-                    </p>
+            if (
+                quest.rewards.organisation > 0
+            ) {
+
+                rewardText.push(
+                    `🧹 +${quest.rewards.organisation}`
+                );
+
+            }
+
+
+            if (
+                quest.rewards.wellbeing > 0
+            ) {
+
+                rewardText.push(
+                    `🌿 +${quest.rewards.wellbeing}`
+                );
+
+            }
+
+
+            if (
+                quest.rewards.intelligence > 0
+            ) {
+
+                rewardText.push(
+                    `🧠 +${quest.rewards.intelligence}`
+                );
+
+            }
+
+
+            if (
+                quest.rewards.development > 0
+            ) {
+
+                rewardText.push(
+                    `✨ +${quest.rewards.development}`
+                );
+
+            }
+
+
+            if (
+                quest.rewards.diamonds > 0
+            ) {
+
+                rewardText.push(
+                    `💎 +${quest.rewards.diamonds}`
+                );
+
+            }
+
+
+            card.innerHTML = `
+
+                <div class="quest-header">
+
+                    <div>
+
+                        <h3>
+                            ${escapeHTML(
+                                quest.name
+                            )}
+                        </h3>
+
+                        <p class="quest-description">
+
+                            ${escapeHTML(
+                                quest.description ||
+                                "Complete the steps below."
+                            )}
+
+                        </p>
+
+                    </div>
+
+
+                    <div class="quest-reward">
+
+                        ${
+                            rewardText.join(
+                                " · "
+                            )
+                        }
+
+                    </div>
 
                 </div>
 
-                <div class="quest-reward">
-                    ${rewardText.join(" · ")}
+
+                <div class="quest-steps">
+
+                    ${
+                        quest.steps
+                            .map(
+                                (
+                                    step,
+                                    index
+                                ) => `
+
+                        <label class="
+                            quest-step
+                            ${
+                                step.completed
+                                    ? "completed"
+                                    : ""
+                            }
+                        ">
+
+                            <input
+                                type="checkbox"
+
+                                ${
+                                    step.completed
+                                        ? "checked"
+                                        : ""
+                                }
+
+                                onchange="
+                                    toggleStep(
+                                        ${quest.id},
+                                        '${type}',
+                                        ${index}
+                                    )
+                                "
+                            >
+
+                            <span>
+
+                                ${escapeHTML(
+                                    step.text
+                                )}
+
+                            </span>
+
+                        </label>
+
+                    `
+                            )
+                            .join("")
+                    }
+
                 </div>
 
-            </div>
+            `;
 
 
-            <div class="quest-steps">
+            container.appendChild(
+                card
+            );
 
-                ${quest.steps.map((step, index) => `
-
-                    <label class="
-                        quest-step
-                        ${step.completed ? "completed" : ""}
-                    ">
-
-                        <input
-                            type="checkbox"
-                            ${step.completed ? "checked" : ""}
-                            onchange="
-                                toggleStep(
-                                    ${quest.id},
-                                    '${type}',
-                                    ${index}
-                                )
-                            "
-                        >
-
-                        <span>
-                            ${escapeHTML(step.text)}
-                        </span>
-
-                    </label>
-
-                `).join("")}
-
-            </div>
-
-        `;
-
-
-        container.appendChild(card);
-
-    });
+        }
+    );
 
 }
 
@@ -833,71 +1098,122 @@ function renderQuestList(type) {
 function renderShop() {
 
     const container =
-        document.getElementById("shopGrid");
+        document.getElementById(
+            "shopGrid"
+        );
 
 
     container.innerHTML = "";
 
 
-    shopItems.forEach(item => {
+    shopItems.forEach(
+        item => {
 
-        const owned =
-    game.inventory.includes(item.id);
-
-const isRepeatable =
-    item.repeatable === true;
-
-
-        const canAfford =
-            game.diamonds >= item.price;
+            const owned =
+                game.inventory.includes(
+                    item.id
+                );
 
 
-        const card =
-            document.createElement("div");
-
-        card.className = "shop-item";
+            const isRepeatable =
+                item.repeatable === true;
 
 
-        card.innerHTML = `
-
-            <div class="shop-icon">
-                ${item.icon}
-            </div>
-
-            <h3>
-                ${item.name}
-            </h3>
-
-            <p>
-                ${item.description}
-            </p>
-
-            <div class="price">
-                💎 ${item.price}
-            </div>
-
-            <button
-                class="buy-button"
-                onclick="buyItem('${item.id}')"
-                ${(!canAfford || (owned && !isRepeatable)) ? "disabled" : ""}
-            >
-
-                ${
-                   owned && !isRepeatable
-        ? "✓ Owned"
-        : canAfford
-            ? (isRepeatable ? "Buy another" : "Buy")
-            : "Not enough diamonds"
-                }
-
-            </button>
-
-        `;
+            const canAfford =
+                game.diamonds >=
+                item.price;
 
 
-        container.appendChild(card);
+            const card =
+                document.createElement(
+                    "div"
+                );
 
-    });
+
+            card.className =
+                "shop-item";
+
+
+            card.innerHTML = `
+
+                <div class="shop-icon">
+
+                    ${item.icon}
+
+                </div>
+
+
+                <h3>
+
+                    ${item.name}
+
+                </h3>
+
+
+                <p>
+
+                    ${item.description}
+
+                </p>
+
+
+                <div class="price">
+
+                    💎 ${item.price}
+
+                </div>
+
+
+                <button
+
+                    class="buy-button"
+
+                    onclick="
+                        buyItem('${item.id}')
+                    "
+
+                    ${
+                        (
+                            !canAfford ||
+                            (
+                                owned &&
+                                !isRepeatable
+                            )
+                        )
+                            ? "disabled"
+                            : ""
+                    }
+
+                >
+
+                    ${
+                        owned &&
+                        !isRepeatable
+
+                            ? "✓ Owned"
+
+                            : canAfford
+
+                                ? (
+                                    isRepeatable
+                                        ? "Buy another"
+                                        : "Buy"
+                                )
+
+                                : "Not enough diamonds"
+                    }
+
+                </button>
+
+            `;
+
+
+            container.appendChild(
+                card
+            );
+
+        }
+    );
 
 }
 
@@ -910,7 +1226,8 @@ function buyItem(itemId) {
 
     const item =
         shopItems.find(
-            item => item.id === itemId
+            item =>
+                item.id === itemId
         );
 
 
@@ -920,27 +1237,40 @@ function buyItem(itemId) {
 
 
     if (
-    game.inventory.includes(item.id) &&
-    !item.repeatable
-) {
+        game.inventory.includes(
+            item.id
+        ) &&
+        !item.repeatable
+    ) {
 
-    alert("You already own this item!");
-
-    return;
-}
-
-
-    if (game.diamonds < item.price) {
-
-        alert("You don't have enough diamonds yet!");
+        alert(
+            "You already own this item!"
+        );
 
         return;
     }
 
 
-    game.diamonds -= item.price;
+    if (
+        game.diamonds <
+        item.price
+    ) {
 
-    game.inventory.push(item.id);
+        alert(
+            "You don't have enough diamonds yet!"
+        );
+
+        return;
+    }
+
+
+    game.diamonds -=
+        item.price;
+
+
+    game.inventory.push(
+        item.id
+    );
 
 
     saveGame();
@@ -959,16 +1289,20 @@ function buyItem(itemId) {
 /* INVENTORY */
 /* ================================= */
 
-
-    function renderInventory() {
+function renderInventory() {
 
     const container =
-        document.getElementById("inventoryGrid");
+        document.getElementById(
+            "inventoryGrid"
+        );
+
 
     container.innerHTML = "";
 
 
-    if (game.inventory.length === 0) {
+    if (
+        game.inventory.length === 0
+    ) {
 
         container.innerHTML = `
 
@@ -997,20 +1331,28 @@ function buyItem(itemId) {
     const counts = {};
 
 
-    game.inventory.forEach(itemId => {
+    game.inventory.forEach(
+        itemId => {
 
-        counts[itemId] =
-            (counts[itemId] || 0) + 1;
+            counts[itemId] =
+                (
+                    counts[itemId] ||
+                    0
+                ) + 1;
 
-    });
+        }
+    );
 
 
-    Object.entries(counts).forEach(
+    Object.entries(
+        counts
+    ).forEach(
         ([itemId, count]) => {
 
             const item =
                 shopItems.find(
-                    item => item.id === itemId
+                    item =>
+                        item.id === itemId
                 );
 
 
@@ -1020,7 +1362,10 @@ function buyItem(itemId) {
 
 
             const card =
-                document.createElement("div");
+                document.createElement(
+                    "div"
+                );
+
 
             card.className =
                 "inventory-item";
@@ -1029,25 +1374,42 @@ function buyItem(itemId) {
             card.innerHTML = `
 
                 <div class="inventory-icon">
+
                     ${item.icon}
+
                 </div>
 
+
                 <h3>
+
                     ${item.name}
+
                 </h3>
 
+
                 <p>
+
                     ${item.description}
+
                 </p>
 
+
                 <strong>
-                    ${item.repeatable ? `×${count}` : "Owned"}
+
+                    ${
+                        item.repeatable
+                            ? `×${count}`
+                            : "Owned"
+                    }
+
                 </strong>
 
             `;
 
 
-            container.appendChild(card);
+            container.appendChild(
+                card
+            );
 
         }
     );
@@ -1062,9 +1424,13 @@ function buyItem(itemId) {
 function escapeHTML(text) {
 
     const div =
-        document.createElement("div");
+        document.createElement(
+            "div"
+        );
+
 
     div.textContent = text;
+
 
     return div.innerHTML;
 
@@ -1079,17 +1445,22 @@ function renderAll() {
 
     renderStats();
 
-    renderQuestList("main");
+    renderQuestList(
+        "main"
+    );
 
-    renderQuestList("side");
+    renderQuestList(
+        "side"
+    );
 
     renderShop();
 
     renderInventory();
-    
+
     renderRoom();
 
 }
+
 
 /* ================================= */
 /* ROOM */
@@ -1098,59 +1469,111 @@ function renderAll() {
 function renderRoom() {
 
     const container =
-        document.getElementById("roomItems");
+        document.getElementById(
+            "roomItems"
+        );
+
 
     if (!container) {
         return;
     }
+
 
     container.innerHTML = "";
 
 
     /* PETS */
 
-    if (game.inventory.includes("cat")) {
+    if (
+        game.inventory.includes(
+            "cat"
+        )
+    ) {
 
         const cat =
-            document.createElement("div");
+            document.createElement(
+                "div"
+            );
 
-        cat.className = "room-pet cat";
 
-        cat.textContent = "🐈";
+        cat.className =
+            "room-pet cat";
 
-        cat.title = "Your Cosy Cat";
 
-        container.appendChild(cat);
+        cat.textContent =
+            "🐈";
+
+
+        cat.title =
+            "Your Cosy Cat";
+
+
+        container.appendChild(
+            cat
+        );
+
     }
 
 
-    if (game.inventory.includes("rabbit")) {
+    if (
+        game.inventory.includes(
+            "rabbit"
+        )
+    ) {
 
         const rabbit =
-            document.createElement("div");
+            document.createElement(
+                "div"
+            );
 
-        rabbit.className = "room-pet rabbit";
 
-        rabbit.textContent = "🐇";
+        rabbit.className =
+            "room-pet rabbit";
 
-        rabbit.title = "Your Little Rabbit";
 
-        container.appendChild(rabbit);
+        rabbit.textContent =
+            "🐇";
+
+
+        rabbit.title =
+            "Your Little Rabbit";
+
+
+        container.appendChild(
+            rabbit
+        );
+
     }
 
 
-    if (game.inventory.includes("puppy")) {
+    if (
+        game.inventory.includes(
+            "puppy"
+        )
+    ) {
 
         const puppy =
-            document.createElement("div");
+            document.createElement(
+                "div"
+            );
 
-        puppy.className = "room-pet puppy";
 
-        puppy.textContent = "🐕";
+        puppy.className =
+            "room-pet puppy";
 
-        puppy.title = "Your Adventure Puppy";
 
-        container.appendChild(puppy);
+        puppy.textContent =
+            "🐕";
+
+
+        puppy.title =
+            "Your Adventure Puppy";
+
+
+        container.appendChild(
+            puppy
+        );
+
     }
 
 
@@ -1158,27 +1581,43 @@ function renderRoom() {
 
     const flowers =
         game.inventory.filter(
-            item => item === "flowers"
+            item =>
+                item === "flowers"
         ).length;
 
 
-    for (let i = 0; i < flowers; i++) {
+    for (
+        let i = 0;
+        i < flowers;
+        i++
+    ) {
 
         const flower =
-            document.createElement("div");
+            document.createElement(
+                "div"
+            );
+
 
         flower.className =
             "room-decoration flowers";
 
-        flower.textContent = "💐";
+
+        flower.textContent =
+            "💐";
+
 
         flower.style.left =
             `${250 + (i * 45)}px`;
 
+
         flower.style.top =
             `${175 + ((i % 2) * 15)}px`;
 
-        container.appendChild(flower);
+
+        container.appendChild(
+            flower
+        );
+
     }
 
 
@@ -1186,27 +1625,43 @@ function renderRoom() {
 
     const plants =
         game.inventory.filter(
-            item => item === "plant"
+            item =>
+                item === "plant"
         ).length;
 
 
-    for (let i = 0; i < plants; i++) {
+    for (
+        let i = 0;
+        i < plants;
+        i++
+    ) {
 
         const plant =
-            document.createElement("div");
+            document.createElement(
+                "div"
+            );
+
 
         plant.className =
             "room-decoration plant";
 
-        plant.textContent = "🪴";
+
+        plant.textContent =
+            "🪴";
+
 
         plant.style.right =
             `${260 + (i * 55)}px`;
 
+
         plant.style.bottom =
             `${175 + ((i % 2) * 10)}px`;
 
-        container.appendChild(plant);
+
+        container.appendChild(
+            plant
+        );
+
     }
 
 
@@ -1214,30 +1669,47 @@ function renderRoom() {
 
     const bookshelves =
         game.inventory.filter(
-            item => item === "bookshelf"
+            item =>
+                item === "bookshelf"
         ).length;
 
 
-    for (let i = 0; i < bookshelves; i++) {
+    for (
+        let i = 0;
+        i < bookshelves;
+        i++
+    ) {
 
         const bookshelf =
-            document.createElement("div");
+            document.createElement(
+                "div"
+            );
+
 
         bookshelf.className =
             "room-decoration bookshelf";
 
-        bookshelf.textContent = "📚";
+
+        bookshelf.textContent =
+            "📚";
+
 
         bookshelf.style.left =
             `${80 + (i * 60)}px`;
 
-        bookshelf.style.top =
-            `${175}px`;
 
-        container.appendChild(bookshelf);
+        bookshelf.style.top =
+            "175px";
+
+
+        container.appendChild(
+            bookshelf
+        );
+
     }
 
 }
+
 
 /* ================================= */
 /* CLOSE MODAL WHEN CLICKING OUTSIDE */
@@ -1245,15 +1717,20 @@ function renderRoom() {
 
 document
     .getElementById("questModal")
-    .addEventListener("click", function(event) {
+    .addEventListener(
+        "click",
+        function(event) {
 
-        if (event.target === this) {
+            if (
+                event.target === this
+            ) {
 
-            closeQuestCreator();
+                closeQuestCreator();
+
+            }
 
         }
-
-    });
+    );
 
 
 /* ================================= */
@@ -1262,7 +1739,10 @@ document
 
 document
     .getElementById("questForm")
-    .addEventListener("submit", createQuest);
+    .addEventListener(
+        "submit",
+        createQuest
+    );
 
 
 /* ================================= */
