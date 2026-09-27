@@ -101,29 +101,47 @@ body {
     border: 1px solid #e4ddd7;
     border-radius: 20px;
     padding: 8px;
+
+    /* IMPORTANT: ONE HORIZONTAL BAR */
     display: flex;
-    align-items: center;
+    flex-direction: row;
+    flex-wrap: nowrap;
+
     gap: 6px;
-    box-shadow: 0 10px 30px rgba(55,45,50,0.09);
-    margin-bottom: 30px;
+
+    /* Allows scrolling instead of wrapping */
     overflow-x: auto;
     overflow-y: hidden;
+
     white-space: nowrap;
+
+    box-shadow: 0 10px 30px rgba(55,45,50,0.09);
+    margin-bottom: 30px;
+
+    /* Hide scrollbar while still allowing scrolling */
     scrollbar-width: thin;
-    -webkit-overflow-scrolling: touch;
 }
 
 .nav-button {
-    flex: 1 0 auto;
     border: none;
     background: transparent;
-    padding: 17px 18px;
+
+    padding: 17px 22px;
+
     border-radius: 14px;
+
     font-family: inherit;
     font-size: 16px;
+
     color: #625a66;
+
     cursor: pointer;
+
     transition: 0.2s ease;
+
+    /* Prevent buttons from shrinking */
+    flex: 0 0 auto;
+
     white-space: nowrap;
 }
 
@@ -739,8 +757,12 @@ body {
         grid-template-columns: repeat(2, 1fr);
     }
 
+    /* KEEP NAVIGATION HORIZONTAL */
     .main-nav {
-        justify-content: flex-start;
+        display: flex;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        overflow-x: auto;
     }
 
     .nav-button {
@@ -756,6 +778,7 @@ body {
         flex-direction: column;
     }
 }
+
 
 @media (max-width: 550px) {
 
@@ -777,7 +800,14 @@ body {
     .modal-content {
         padding: 25px 20px;
     }
+
+    /* SMALLER NAV BUTTONS ON PHONES */
+    .nav-button {
+        padding: 14px 18px;
+        font-size: 14px;
+    }
 }
+
 
 /* ============================= */
 /* MY ROOM */
@@ -1007,120 +1037,4 @@ body {
     inset: 0;
 
     pointer-events: none;
-}
-
-
-/* PETS */
-
-.room-pet {
-    position: absolute;
-
-    bottom: 82px;
-
-    font-size: 70px;
-
-    animation: petBounce 3s ease-in-out infinite;
-
-    filter:
-        drop-shadow(0 7px 5px rgba(0,0,0,0.15));
-}
-
-.room-pet.cat {
-    left: 390px;
-}
-
-.room-pet.rabbit {
-    left: 470px;
-}
-
-.room-pet.puppy {
-    left: 550px;
-}
-
-@keyframes petBounce {
-
-    0%, 100% {
-        transform: translateY(0);
-    }
-
-    50% {
-        transform: translateY(-8px);
-    }
-
-}
-
-
-/* DECORATIONS */
-
-.room-decoration {
-    position: absolute;
-
-    font-size: 45px;
-
-    filter:
-        drop-shadow(0 5px 5px rgba(0,0,0,0.12));
-}
-
-.room-decoration.flowers {
-    left: 270px;
-    top: 190px;
-}
-
-.room-decoration.plant {
-    right: 300px;
-    bottom: 185px;
-}
-
-.room-decoration.bookshelf {
-    left: 95px;
-    top: 185px;
-}
-
-
-/* ROOM MESSAGE */
-
-.room-message {
-    margin-top: 18px;
-
-    background: white;
-
-    border: 1px solid #e3dcd6;
-
-    border-radius: 17px;
-
-    padding: 17px 20px;
-
-    display: flex;
-    align-items: center;
-
-    gap: 14px;
-
-    box-shadow:
-        0 7px 20px rgba(60,50,55,0.06);
-}
-
-.room-message > span {
-    font-size: 28px;
-}
-
-.room-message strong {
-    font-size: 17px;
-}
-
-.room-message p {
-    margin-top: 3px;
-    color: #817781;
-    font-size: 13px;
-}
-/* FINAL NAV OVERRIDE */
-.main-nav {
-    display: flex !important;
-    flex-direction: row !important;
-    flex-wrap: nowrap !important;
-    overflow-x: auto !important;
-    white-space: nowrap !important;
-}
-.main-nav .nav-button {
-    flex: 0 0 auto !important;
-    white-space: nowrap !important;
 }
