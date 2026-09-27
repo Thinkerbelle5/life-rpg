@@ -75,29 +75,32 @@ const shopItems = [
         price: 500,
         description: "Ready for every quest."
     },
-
+    
     {
-        id: "flowers",
-        name: "Flower Bouquet",
-        icon: "💐",
-        price: 75,
-        description: "A little reward for yourself."
+    id: "flowers",
+    name: "Flower Bouquet",
+    icon: "💐",
+    price: 75,
+    description: "A little reward for yourself.",
+    repeatable: true
     },
 
     {
-        id: "plant",
-        name: "Little Plant",
-        icon: "🪴",
-        price: 100,
-        description: "Add some greenery to your room."
-    },
+         id: "plant",
+    name: "Little Plant",
+    icon: "🪴",
+    price: 100,
+    description: "Add some greenery to your room.",
+    repeatable: true
+      },
 
     {
         id: "bookshelf",
-        name: "Bookshelf",
-        icon: "📚",
-        price: 300,
-        description: "For your growing collection."
+    name: "Bookshelf",
+    icon: "📚",
+    price: 300,
+    description: "For your growing collection.",
+    repeatable: true
     },
 
     {
@@ -839,7 +842,10 @@ function renderShop() {
     shopItems.forEach(item => {
 
         const owned =
-            game.inventory.includes(item.id);
+    game.inventory.includes(item.id);
+
+const isRepeatable =
+    item.repeatable === true;
 
 
         const canAfford =
@@ -873,15 +879,15 @@ function renderShop() {
             <button
                 class="buy-button"
                 onclick="buyItem('${item.id}')"
-                ${(!canAfford || owned) ? "disabled" : ""}
+                ${(!canAfford || (owned && !isRepeatable)) ? "disabled" : ""}
             >
 
                 ${
-                    owned
-                        ? "✓ Owned"
-                        : canAfford
-                            ? "Buy"
-                            : "Not enough diamonds"
+                   owned && !isRepeatable
+        ? "✓ Owned"
+        : canAfford
+            ? (isRepeatable ? "Buy another" : "Buy")
+            : "Not enough diamonds"
                 }
 
             </button>
@@ -913,12 +919,15 @@ function buyItem(itemId) {
     }
 
 
-    if (game.inventory.includes(item.id)) {
+    if (
+    game.inventory.includes(item.id) &&
+    !item.repeatable
+) {
 
-        alert("You already own this item!");
+    alert("You already own this item!");
 
-        return;
-    }
+    return;
+}
 
 
     if (game.diamonds < item.price) {
@@ -950,13 +959,11 @@ function buyItem(itemId) {
 /* INVENTORY */
 /* ================================= */
 
-function renderInventory() {
+
+    function renderInventory() {
 
     const container =
-        document.getElementById(
-            "inventoryGrid"
-        );
-
+        document.getElementById("inventoryGrid");
 
     container.innerHTML = "";
 
@@ -987,46 +994,63 @@ function renderInventory() {
     }
 
 
+    const counts = {};
+
+
     game.inventory.forEach(itemId => {
 
-        const item =
-            shopItems.find(
-                item => item.id === itemId
-            );
-
-
-        if (!item) {
-            return;
-        }
-
-
-        const card =
-            document.createElement("div");
-
-        card.className =
-            "inventory-item";
-
-
-        card.innerHTML = `
-
-            <div class="inventory-icon">
-                ${item.icon}
-            </div>
-
-            <h3>
-                ${item.name}
-            </h3>
-
-            <p>
-                ${item.description}
-            </p>
-
-        `;
-
-
-        container.appendChild(card);
+        counts[itemId] =
+            (counts[itemId] || 0) + 1;
 
     });
+
+
+    Object.entries(counts).forEach(
+        ([itemId, count]) => {
+
+            const item =
+                shopItems.find(
+                    item => item.id === itemId
+                );
+
+
+            if (!item) {
+                return;
+            }
+
+
+            const card =
+                document.createElement("div");
+
+            card.className =
+                "inventory-item";
+
+
+            card.innerHTML = `
+
+                <div class="inventory-icon">
+                    ${item.icon}
+                </div>
+
+                <h3>
+                    ${item.name}
+                </h3>
+
+                <p>
+                    ${item.description}
+                </p>
+
+                <strong>
+                    ${item.repeatable ? `×${count}` : "Owned"}
+                </strong>
+
+            `;
+
+
+            container.appendChild(card);
+
+        }
+    );
 
 }
 
@@ -1062,9 +1086,158 @@ function renderAll() {
     renderShop();
 
     renderInventory();
+    
+    renderRoom();
 
 }
 
+/* ================================= */
+/* ROOM */
+/* ================================= */
+
+function renderRoom() {
+
+    const container =
+        document.getElementById("roomItems");
+
+    if (!container) {
+        return;
+    }
+
+    container.innerHTML = "";
+
+
+    /* PETS */
+
+    if (game.inventory.includes("cat")) {
+
+        const cat =
+            document.createElement("div");
+
+        cat.className = "room-pet cat";
+
+        cat.textContent = "🐈";
+
+        cat.title = "Your Cosy Cat";
+
+        container.appendChild(cat);
+    }
+
+
+    if (game.inventory.includes("rabbit")) {
+
+        const rabbit =
+            document.createElement("div");
+
+        rabbit.className = "room-pet rabbit";
+
+        rabbit.textContent = "🐇";
+
+        rabbit.title = "Your Little Rabbit";
+
+        container.appendChild(rabbit);
+    }
+
+
+    if (game.inventory.includes("puppy")) {
+
+        const puppy =
+            document.createElement("div");
+
+        puppy.className = "room-pet puppy";
+
+        puppy.textContent = "🐕";
+
+        puppy.title = "Your Adventure Puppy";
+
+        container.appendChild(puppy);
+    }
+
+
+    /* FLOWERS */
+
+    const flowers =
+        game.inventory.filter(
+            item => item === "flowers"
+        ).length;
+
+
+    for (let i = 0; i < flowers; i++) {
+
+        const flower =
+            document.createElement("div");
+
+        flower.className =
+            "room-decoration flowers";
+
+        flower.textContent = "💐";
+
+        flower.style.left =
+            `${250 + (i * 45)}px`;
+
+        flower.style.top =
+            `${175 + ((i % 2) * 15)}px`;
+
+        container.appendChild(flower);
+    }
+
+
+    /* PLANTS */
+
+    const plants =
+        game.inventory.filter(
+            item => item === "plant"
+        ).length;
+
+
+    for (let i = 0; i < plants; i++) {
+
+        const plant =
+            document.createElement("div");
+
+        plant.className =
+            "room-decoration plant";
+
+        plant.textContent = "🪴";
+
+        plant.style.right =
+            `${260 + (i * 55)}px`;
+
+        plant.style.bottom =
+            `${175 + ((i % 2) * 10)}px`;
+
+        container.appendChild(plant);
+    }
+
+
+    /* BOOKSHELVES */
+
+    const bookshelves =
+        game.inventory.filter(
+            item => item === "bookshelf"
+        ).length;
+
+
+    for (let i = 0; i < bookshelves; i++) {
+
+        const bookshelf =
+            document.createElement("div");
+
+        bookshelf.className =
+            "room-decoration bookshelf";
+
+        bookshelf.textContent = "📚";
+
+        bookshelf.style.left =
+            `${80 + (i * 60)}px`;
+
+        bookshelf.style.top =
+            `${175}px`;
+
+        container.appendChild(bookshelf);
+    }
+
+}
 
 /* ================================= */
 /* CLOSE MODAL WHEN CLICKING OUTSIDE */
