@@ -28,23 +28,30 @@
 <main class="container">
 
     <!-- NAVIGATION -->
-    <nav class="main-nav">
-        <button class="nav-button active" onclick="showTab('mainQuests', this)">
-            📜 Main Quests
-        </button>
+        <nav class="main-nav">
+    <button class="nav-button active" onclick="showTab('mainQuests', this)">
+        📜 Main Quests
+    </button>
 
-        <button class="nav-button" onclick="showTab('sideQuests', this)">
-            ✨ Side Quests
-        </button>
+    <button class="nav-button" onclick="showTab('sideQuests', this)">
+        ✨ Side Quests
+    </button>
 
-        <button class="nav-button" onclick="showTab('shop', this)">
-            💎 Shop
-        </button>
+    <button class="nav-button" onclick="showTab('shop', this)">
+        💎 Shop
+    </button>
 
-        <button class="nav-button" onclick="showTab('inventory', this)">
-            🎒 Inventory
-        </button>
-    </nav>
+    <button class="nav-button" onclick="showTab('inventory', this)">
+        🎒 Inventory
+    </button>
+
+    <button class="nav-button" onclick="showTab('room', this)">
+        🛏️ My Room
+    </button>
+</nav>
+
+        
+       
 
 
     <!-- ========================= -->
@@ -215,6 +222,99 @@
     </section>
 
 </main>
+
+<!-- ========================= -->
+<!-- MY ROOM -->
+<!-- ========================= -->
+
+<section id="room" class="tab-section">
+
+    <div class="section-heading">
+
+        <div>
+            <p class="eyebrow">YOUR LITTLE WORLD</p>
+
+            <h2>🛏️ My Room</h2>
+
+            <p>
+                A cosy space filled with the things you've earned.
+            </p>
+        </div>
+
+    </div>
+
+
+    <div class="room-container">
+
+        <div class="room-wall">
+
+            <div class="room-window">
+                <div class="window-sky">☁️</div>
+                <div class="window-bottom"></div>
+            </div>
+
+
+            <div class="room-shelf">
+
+                <span>🕯️</span>
+                <span>📚</span>
+                <span>🪴</span>
+
+            </div>
+
+
+            <div id="roomItems" class="room-items"></div>
+
+
+            <div class="room-bed">
+
+                <div class="bed-pillow">
+                    💤
+                </div>
+
+                <div class="bed-blanket">
+                    🛏️
+                </div>
+
+            </div>
+
+
+            <div class="room-rug">
+                ✦
+            </div>
+
+
+            <div class="room-desk">
+
+                <div class="desk-top">
+                    📚 💻 🕯️
+                </div>
+
+                <div class="desk-legs">
+                    ▐　　　　▌
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="room-message">
+
+            <span>✨</span>
+
+            <div>
+                <strong>Your room</strong>
+                <p>
+                    Complete quests and visit the shop to decorate it.
+                </p>
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
 
 
 <!-- ========================= -->
